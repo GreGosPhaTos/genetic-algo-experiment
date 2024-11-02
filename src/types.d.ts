@@ -6,31 +6,30 @@ export type UTF8Fitness = {
   getDiffs(): number[];
 };
 
-export interface Individual<T = any, S = number> {
+export interface Individual<T = any> {
   getId: () => string;
-  getScore: () => S;
+  getScore: () => number;
   getGene: () => T;
+  getDivergences: () => any;
 }
 
-export type IndividualBuilder<T = any, G = any, S = number> = {
-  build(gene: G): Individual<T, S>;
+export type IndividualBuilder<T = any> = {
+  build(gene: T): Individual<T>;
 };
 
-export interface Coupler<T = any, S = number> {
-  // Assuming individuals are ranked
+export interface Coupler<T = any> {
   crossover: (
-    parents: Individual<T, S>[],
+    parents: Individual<T>[],
     maxPopulation: number
   ) => Individual<T, S>[];
 }
 
-// Method called for generating the population of a first generation
-export interface Mutator<T = any, S = number> {
-  mutate(gene?: T): Individual<T, S>;
+export interface Mutator<T = any> {
+  mutate(gene?: T): Individual<T>;
 }
 
 export interface GenerationFactory {
-  build: () => Generation;
+  build: (num: number) => Generation;
 }
 
 export interface Selector {

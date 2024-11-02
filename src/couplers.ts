@@ -1,26 +1,17 @@
 import { UTF8EncoderMutator } from './mutators';
-import {
-  Coupler,
-  Individual,
-  IndividualBuilder,
-  Mutator,
-  UTF8Fitness,
-} from './types';
+import { Coupler, Individual, IndividualBuilder, Mutator } from './types';
 
 export function UTF8fitnessBased(
-  individualbuilder: IndividualBuilder<Uint8Array, Uint8Array, UTF8Fitness>
-): Coupler<Uint8Array, UTF8Fitness> {
-  const mutator: Mutator<Uint8Array, UTF8Fitness> = UTF8EncoderMutator(
-    new Uint8Array(),
+  individualbuilder: IndividualBuilder<Uint8Array>
+): Coupler {
+  const mutator: Mutator = UTF8EncoderMutator(
+    new Uint8Array(1),
     individualbuilder,
     1
   );
 
   return {
-    crossover(
-      parents: Individual<Uint8Array, UTF8Fitness>[],
-      maxPopulation: number
-    ): Individual<Uint8Array, UTF8Fitness>[] {
+    crossover(parents: Individual[], maxPopulation: number): Individual[] {
       const offsprings = [];
       for (
         let i = 0;
@@ -38,16 +29,25 @@ export function UTF8fitnessBased(
         }
 
         const parent1Gene = parent1.getGene();
-        const parent2Gene = parent1.getGene();
-        const parent1Fitness = parent1.getScore().getDiffs();
-        const parent2Fitness = parent2.getScore().getDiffs();
-        const offspring = parent2Fitness.map((v, i) => {
-          if (parent1Fitness[i] > v) {
+        const parent2Gene = parent2.getGene();
+        // TODO fix all this
+        const parent1Divergences = parent1.getDivergences() as number[];
+        const parent2Divergences = parent2.getDivergences() as number[];
+        const offspring = parent2Divergences.map((v, i) => {
+          if (parent1Divergences[i] > v) {
             return parent1Gene[i];
           }
 
           return parent2Gene[i];
         });
+
+        // console.log({
+        //   parent1Gene,
+        //   parent2Gene,
+        //   parent1Divergences,
+        //   parent2Divergences,
+        //   offspring,
+        // });
 
         offsprings.push(individualbuilder.build(new Uint8Array(offspring)));
         offsprings.push(mutator.mutate(i % 2 ? parent2Gene : parent1Gene));
@@ -59,7 +59,7 @@ export function UTF8fitnessBased(
 }
 
 export function binarySinglePoint(
-  individualbuilder: IndividualBuilder<string, string, number>
+  individualbuilder: IndividualBuilder
 ): Coupler {
   return {
     crossover(parents: Individual[], maxPopulation: number): Individual[] {

@@ -22,14 +22,17 @@ import { binarySinglePoint, UTF8fitnessBased } from './src/couplers';
 import {
   binaryIndividualBuilder,
   UTF8IndividualBuilder,
-} from './src/individual';
+} from './src/individuals/individual-builders';
 import { binaryStringEncoderMutator, UTF8EncoderMutator } from './src/mutators';
 import Population from './src/population';
 import { rouletteWheel } from './src/selectors';
-import { binaryStringToUTF8String, stringToBinary } from './src/string.utils';
+import {
+  binaryStringToUTF8String,
+  stringToBinary,
+} from './src/utils/string.utils';
 import { Coupler, GenerationFactory, Mutator, Selector } from './src/types';
 
-const target = 'Hel';
+const target = 'Hello';
 
 const utf8Encoder = new TextEncoder();
 
@@ -41,8 +44,8 @@ export class Generation {
 
   constructor(
     selector: Selector,
-    mutator: Mutator<any, any>,
-    coupler: Coupler<any, any>,
+    mutator: Mutator,
+    coupler: Coupler,
     generationNumber: number
   ) {
     this.selector = selector;
@@ -121,7 +124,7 @@ export class Generation {
 }
 
 class GenerationManager {
-  private readonly populationHistory: Population[];
+  private populationHistory: Population[];
   private readonly maxNumberOfGeneration: number;
   private readonly maxFitnessThresold: number;
   private readonly generationFactory: GenerationFactory;
@@ -147,7 +150,7 @@ class GenerationManager {
       generations <= this.maxNumberOfGeneration;
       generations++
     ) {
-      const generation = this.generationFactory.build();
+      const generation = this.generationFactory.build(generations);
       const pop = generation.generatePopulation(
         maxNumberOfIndividual,
         naturalSelection,
@@ -157,6 +160,10 @@ class GenerationManager {
       );
 
       this.populationHistory.push(pop);
+      if (this.populationHistory.length > 20) {
+        this.populationHistory = this.populationHistory.slice(-20);
+      }
+
       const max = pop.isMaxFitnessThresoldReached(this.maxFitnessThresold);
       if (max) {
         var t = new TextDecoder();
@@ -166,18 +173,22 @@ class GenerationManager {
           max?.getGene(),
           // binaryStringToUTF8String(max?.getGene()),
           t.decode(max?.getGene()),
-          (max?.getScore() as any).getDiffs()
+          max?.getDivergences()
         );
         process.exit(0);
       }
 
       // Debug
       console.log(
+        'Generation',
+        generation.getGenerationNumber(),
+        'Population total ',
+        pop.getIndividuals().length,
         'Population scores ',
         pop.getFitness(),
         '   peaks ',
-        pop.getPeaks(),
-        process.memoryUsage()
+        pop.getPeaks()
+        // process.memoryUsage()
       );
       // let cpt = 0;
       // for (const [i, v] of pop.getIndividuals().entries()) {
@@ -215,7 +226,7 @@ class GenerationManager {
           return acc + 1;
         }
 
-        return acc - 1;
+        return acc;
       },
       0
     );
@@ -237,10 +248,10 @@ const utf8Mutator = UTF8EncoderMutator(byteArray, utf8IBuilder);
 const utfCoupler = UTF8fitnessBased(utf8IBuilder);
 
 const generationFactory = {
-  build: () => {
-    return new Generation(rouletteWheel, utf8Mutator, utfCoupler, 3);
+  build: (num: number) => {
+    return new Generation(rouletteWheel, utf8Mutator, utfCoupler, num);
   },
 };
 
-const start = new GenerationManager(generationFactory, 1000, 99);
-start.startGeneticAlgorythm(1000, 800);
+const start = new GenerationManager(generationFactory, 1000, 100);
+start.startGeneticAlgorythm(5000, 5000);

@@ -7,18 +7,34 @@ export const rouletteWheel: Selector = {
 
     const totalFitness = individuals.reduce((acc, i) => acc + i.getScore(), 0);
     const newIndividuals: Individual[] = [];
-    let wheelPosition = Math.random() * totalFitness;
-
-    for (let i = 0; i < naturalSelection; i++) {
-      for (const individual of individuals) {
-        wheelPosition -= individual.getScore();
-        if (wheelPosition <= 0) {
-          newIndividuals.push(individual);
-          break;
-        }
+    const turnWheel = () => Math.random() * totalFitness;
+    let wheelPosition = turnWheel();
+    const inserted: string[] = [];
+    for (let i = 0; i < individuals.length; i++) {
+      if (newIndividuals.length >= naturalSelection) {
+        break;
       }
 
-      newIndividuals.push(individuals[individuals.length - 1]);
+      const individual = individuals[i];
+      wheelPosition -= individual.getScore();
+      if (wheelPosition <= 0) {
+        // console.log({
+        //   totalFitness,
+        //   wheelPosition,
+        //   id: individual.getId(),
+        //   picked: individual.getGene(),
+        //   sc: individual.getScore(),
+        // });
+
+        // if (inserted.includes(individual.getId())) {
+        //   console.log('DOUBLONS');
+        // }
+
+        inserted.push(individual.getId());
+        newIndividuals.push(individual);
+        wheelPosition = turnWheel();
+        i = 0;
+      }
     }
 
     return newIndividuals;

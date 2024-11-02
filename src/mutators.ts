@@ -1,12 +1,12 @@
-import { randomString, stringToBinary } from './string.utils';
-import { Individual, IndividualBuilder, Mutator, UTF8Fitness } from './types';
+import { randomString, stringToBinary } from './utils/string.utils';
+import { Individual, IndividualBuilder, Mutator } from './types';
 
 export function UTF8EncoderMutator(
   target: Uint8Array,
-  individualBuilder: IndividualBuilder<Uint8Array, Uint8Array, UTF8Fitness>,
+  individualBuilder: IndividualBuilder,
   mutationProbability = 0.01,
   mutationBytesVariation = 0.05
-): Mutator<Uint8Array, UTF8Fitness> {
+): Mutator {
   return {
     mutate(gene?: Uint8Array) {
       let mutatedGene: Uint8Array;
