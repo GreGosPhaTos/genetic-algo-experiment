@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Node Process",
+      "port": 6499,  // Default inspect port
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Bun Tests",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": ["test"],
+      "args": ["--inspect"],
+      "skipFiles": ["<node_internals>/**"],
+      "outFiles": ["${workspaceFolder}/**/*.ts"],
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch with Bun",
+      "runtimeExecutable": "bun",
+      "args": ["--inspect"],
+      "program": "${workspaceFolder}/main.ts",
+      "skipFiles": ["<node_internals>/**"],
+      "outFiles": ["${workspaceFolder}/**/*.ts"]
+    }
+  ]
+}

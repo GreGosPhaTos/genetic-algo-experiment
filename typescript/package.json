@@ -1,15 +1,16 @@
 {
-  "devDependencies": {
-    "eslint": "^9.6.0",
-    "typescript": "^5.5.2"
-  },
   "name": "typescript",
   "version": "1.0.0",
-  "description": "Genetic algo",
+  "author": "Adrien",
   "main": "main.ts",
+  "devDependencies": {
+    "eslint": "^9.6.0",
+    "typescript": "^5.5.2",
+    "@types/bun": "latest"
+  },
+  "description": "Genetic algo",
+  "license": "ISC",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Adrien",
-  "license": "ISC"
+  }
 }
