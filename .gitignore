@@ -1,0 +1,9 @@
+# Node.js specific files
+node_modules/
+npm-debug.log*
+yarn-error.log*
+yarn-debug.log*
+
+# OS specific files
+.DS_Store
+Thumbs.db
