@@ -29,27 +29,46 @@ import {
   binaryStringEncoderMutator,
   UTF8EncoderMutator,
 } from './src/mutators/mutators';
+import { getUserInputs } from './src/prompt/prompt';
 import { rouletteWheel } from './src/selectors/selectors';
+import { Coupler, IndividualBuilder, Mutator } from './src/types';
 
-const target = 'Hello';
 const utf8Encoder = new TextEncoder();
 
-// 1st experiment
-const iBuilder = binaryIndividualBuilder(target);
-const coupler = binarySinglePoint(iBuilder);
-const mutator = binaryStringEncoderMutator(target, iBuilder);
-// 2nd experiment // Crée un encodeur UTF-8
-const byteArray = utf8Encoder.encode(target);
+getUserInputs()
+  .then((res) => {
+    let iBuilder: IndividualBuilder;
+    let coupler: Coupler;
+    let mutator: Mutator;
+    if (!res) {
+      return;
+    }
 
-const utf8IBuilder = UTF8IndividualBuilder(byteArray);
-const utf8Mutator = UTF8EncoderMutator(byteArray, utf8IBuilder);
-const utfCoupler = UTF8fitnessBased(utf8IBuilder);
+    if (res.strategy === 'binary') {
+      // 1st experiment
+      iBuilder = binaryIndividualBuilder(res.target);
+      coupler = binarySinglePoint(iBuilder);
+      mutator = binaryStringEncoderMutator(res.target, iBuilder);
+    } else {
+      // 2nd experiment
+      const byteArray = utf8Encoder.encode(res.target);
 
-const generationFactory = {
-  build: (num: number) => {
-    return new Generation(rouletteWheel, utf8Mutator, utfCoupler, num);
-  },
-};
+      iBuilder = UTF8IndividualBuilder(byteArray);
+      mutator = UTF8EncoderMutator(byteArray, iBuilder);
+      coupler = UTF8fitnessBased(iBuilder);
+    }
 
-const start = new GenerationManager(generationFactory, 1000, 100);
-start.startGeneticAlgorythm(5000, 5000);
+    const generationFactory = {
+      build: (num: number) => {
+        return new Generation(rouletteWheel, mutator, coupler, num);
+      },
+    };
+
+    const start = new GenerationManager(
+      generationFactory,
+      res.generations,
+      res.aimedScore
+    );
+    start.startGeneticAlgorythm(res.populationSize, res.naturalSelectionSize);
+  })
+  .finally(() => process.exit(0));

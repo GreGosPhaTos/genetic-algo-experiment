@@ -3,8 +3,6 @@
 This repository aims to experiment with genetic algorithms.
 It is a purely educational initiative.
 
-Change the value of target in `main.ts` the algorithm should guess the string in target.
-
 ## typescript
 
 Install bun.js https://bun.sh/
