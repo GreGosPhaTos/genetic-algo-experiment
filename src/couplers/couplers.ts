@@ -1,5 +1,5 @@
-import { UTF8EncoderMutator } from './mutators';
-import { Coupler, Individual, IndividualBuilder, Mutator } from './types';
+import { UTF8EncoderMutator } from '../mutators/mutators';
+import { Coupler, Individual, IndividualBuilder, Mutator } from '../types';
 
 export function UTF8fitnessBased(
   individualbuilder: IndividualBuilder<Uint8Array>

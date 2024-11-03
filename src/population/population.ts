@@ -1,4 +1,4 @@
-import { Individual } from './types';
+import { Individual } from '../types';
 
 export default class Population {
   private readonly individuals: Individual[];

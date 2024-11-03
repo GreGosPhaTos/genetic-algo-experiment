@@ -1,4 +1,4 @@
-import { Individual, Selector } from './types';
+import { Individual, Selector } from '../types';
 
 export const rouletteWheel: Selector = {
   select(population, naturalSelection) {

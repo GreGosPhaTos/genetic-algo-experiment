@@ -1,8 +1,8 @@
 import { describe, expect, it, beforeEach } from 'bun:test';
 import { rouletteWheel } from './selectors';
 
-import { Individual } from './types';
-import Population from './population';
+import { Individual } from '../types';
+import Population from '../population/population';
 
 // Mocking Math.random manually
 const originalMathRandom = Math.random;

@@ -1,5 +1,5 @@
-import { randomString, stringToBinary } from './utils/string.utils';
-import { Individual, IndividualBuilder, Mutator } from './types';
+import { randomString, stringToBinary } from '../utils/string.utils';
+import { Individual, IndividualBuilder, Mutator } from '../types';
 
 export function UTF8EncoderMutator(
   target: Uint8Array,
