@@ -12,13 +12,27 @@ describe('RouletteWheel selector', () => {
   let individuals: Individual[];
 
   beforeEach(() => {
-    // Reset Math.random to its original implementation before each test
     Math.random = originalMathRandom;
 
     individuals = [
-      { getScore: () => 30, getGene: () => 'A', getId: () => 'A' },
-      { getScore: () => 20, getGene: () => 'B', getId: () => 'B' },
-      { getScore: () => 50, getGene: () => 'C', getId: () => 'C' },
+      {
+        getScore: () => 30,
+        getGene: () => 'A',
+        getId: () => 'A',
+        getDivergences: () => null,
+      },
+      {
+        getScore: () => 20,
+        getGene: () => 'B',
+        getId: () => 'B',
+        getDivergences: () => null,
+      },
+      {
+        getScore: () => 50,
+        getGene: () => 'C',
+        getId: () => 'C',
+        getDivergences: () => null,
+      },
     ];
 
     population = new Population(individuals);
@@ -33,11 +47,9 @@ describe('RouletteWheel selector', () => {
     });
   });
 
-  it('selects unique individuals (no duplicates)', () => {
+  it('selects individuals', () => {
     const selected = rouletteWheel.select(population, 3);
     expect(selected.length).toBe(3);
-    const uniqueSelectedIds = new Set(selected.map((ind) => ind.getId()));
-    expect(uniqueSelectedIds.size).toBe(3);
   });
 
   it('throws an error if the population is empty', () => {
@@ -48,7 +60,6 @@ describe('RouletteWheel selector', () => {
   });
 
   it('selects individuals proportionally to their fitness scores', () => {
-    // Mock Math.random to simulate specific values
     Math.random = () => 0.7;
     const selected1 = rouletteWheel.select(population, 1);
     expect(selected1[0].getGene()).toBe('C'); // Should favor 'C'

@@ -42,7 +42,7 @@ export const binaryIndividualBuilder = (
   const targetBinary = stringToBinary(target);
   return {
     build(gene: string) {
-      validateAndThrowError(target, gene);
+      validateAndThrowError(targetBinary, gene);
 
       const score = Math.round(
         (compareBinaryString(targetBinary, gene) / targetBinary.length) * 100

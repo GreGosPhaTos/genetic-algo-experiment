@@ -63,7 +63,6 @@ describe('binaryIndividualBuilder', () => {
     // Let's say we use compareBinaryString(targetBinary, gene) to calculate score.
     // Assuming compareBinaryString() calculates number of matching bits, we can expect
     // the score to be relative to how many bits match between 'ABC' and 'ABD'.
-
     const expectedScore = Math.round(
       (compareBinaryString(targetBinary, gene) / targetBinary.length) * 100
     );
