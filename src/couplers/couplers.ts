@@ -33,6 +33,7 @@ export function UTF8fitnessBased(
         // TODO fix all this
         const parent1Divergences = parent1.getDivergences() as number[];
         const parent2Divergences = parent2.getDivergences() as number[];
+        // Base offspring is created out the best gene of parents
         const offspring = parent2Divergences.map((v, i) => {
           if (parent1Divergences[i] > v) {
             return parent1Gene[i];
@@ -49,8 +50,13 @@ export function UTF8fitnessBased(
         //   offspring,
         // });
 
-        offsprings.push(individualbuilder.build(new Uint8Array(offspring)));
-        offsprings.push(mutator.mutate(i % 2 ? parent2Gene : parent1Gene));
+        // add the best offspring
+        const utf8Offspring = new Uint8Array(offspring);
+        offsprings.push(individualbuilder.build(utf8Offspring));
+        // add a mutated version of the offspring
+        offsprings.push(mutator.mutate(utf8Offspring));
+        // Or add either one mutation of a parent
+        // offsprings.push(mutator.mutate(i % 2 ? parent2Gene : parent1Gene));
       }
 
       return offsprings;
